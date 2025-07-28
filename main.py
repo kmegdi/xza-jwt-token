@@ -60,7 +60,7 @@ def majorlogin_jwt():
     encrypted_data = encrypt_message(serialized_data)
     hex_encrypted_data = binascii.hexlify(encrypted_data).decode('utf-8')
 
-    url = "https://client.ind.freefiremobile.com/MajorLogin"
+    url = "https://loginbp.ggblueshark.com/MajorLogin"
     headers = {
         "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_Z01QD Build/PI)",
         "Connection": "Keep-Alive",
