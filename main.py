@@ -113,7 +113,7 @@ def majorlogin_jwt():
     except requests.RequestException as e:
         return jsonify({"message": str(e)}), 500
 
-@app.route('/api/oauth_guest', methods=['GET'])
+@app.route('/jwt-acc', methods=['GET'])  # ✅ تم التعديل هنا
 def oauth_guest():
     uid = request.args.get('uid')
     password = request.args.get('password')
