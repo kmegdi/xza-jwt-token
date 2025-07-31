@@ -60,7 +60,7 @@ def majorlogin_jwt():
     encrypted_data = encrypt_message(serialized_data)
     hex_encrypted_data = binascii.hexlify(encrypted_data).decode('utf-8')
 
-    url = "https://loginbp.ggblueshark.com/MajorLogin"
+    url = "https://clientbp.common.ggbluefox.com/GetLoginData"
     headers = {
         "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_Z01QD Build/PI)",
         "Connection": "Keep-Alive",
@@ -69,7 +69,7 @@ def majorlogin_jwt():
         "Expect": "100-continue",
         "X-Unity-Version": "2018.4.11f1",
         "X-GA": "v1 1",
-        "ReleaseVersion": "OB49"
+        "ReleaseVersion": "OB50"
     }
     edata = bytes.fromhex(hex_encrypted_data)
 
