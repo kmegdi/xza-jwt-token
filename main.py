@@ -30,7 +30,7 @@ def majorlogin_jwt():
         platform_type = int(platform_type)
     except ValueError:
         return jsonify({"message": "invalid platform_type"}), 400
-        
+
     game_data = my_pb2.GameData()
     game_data.timestamp = "2024-12-05 18:15:32"
     game_data.game_name = "free fire"
@@ -59,22 +59,22 @@ def majorlogin_jwt():
     serialized_data = game_data.SerializeToString()
     encrypted_data = encrypt_message(serialized_data)
     hex_encrypted_data = binascii.hexlify(encrypted_data).decode('utf-8')
+    payload_bytes = bytes.fromhex(hex_encrypted_data)
 
     url = "https://clientbp.common.ggbluefox.com/GetLoginData"
     headers = {
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_Z01QD Build/PI)",
-        "Connection": "Keep-Alive",
-        "Accept-Encoding": "gzip",
-        "Content-Type": "application/octet-stream",
-        "Expect": "100-continue",
+        "Authorization": f"Bearer {access_token}",
         "X-Unity-Version": "2018.4.11f1",
         "X-GA": "v1 1",
-        "ReleaseVersion": "OB50"
+        "ReleaseVersion": "OB50",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": str(len(payload_bytes)),
+        "User-Agent": "Dalvik/2.1.0 (Linux; Android 9)",
+        "Connection": "close",
     }
-    edata = bytes.fromhex(hex_encrypted_data)
 
     try:
-        response = requests.post(url, data=edata, headers=headers, verify=False, timeout=5)
+        response = requests.post(url, data=payload_bytes, headers=headers, verify=False, timeout=5)
 
         if response.status_code == 200:
             data_dict = None
@@ -113,7 +113,8 @@ def majorlogin_jwt():
     except requests.RequestException as e:
         return jsonify({"message": str(e)}), 500
 
-@app.route('/jwt-acc', methods=['GET'])  # ✅ تم التعديل هنا
+
+@app.route('/jwt-acc', methods=['GET'])
 def oauth_guest():
     uid = request.args.get('uid')
     password = request.args.get('password')
@@ -155,13 +156,14 @@ def oauth_guest():
         return jsonify({"message": "OAuth response missing access_token or open_id"}), 500
 
     params = {
-         'access_token': oauth_data['access_token'],
-         'open_id': oauth_data['open_id'],
-         'platform_type': str(oauth_data.get('platform', 4))
+        'access_token': oauth_data['access_token'],
+        'open_id': oauth_data['open_id'],
+        'platform_type': str(oauth_data.get('platform', 4))
     }
-    
-    with app.test_request_context('/api/majorlogin_jwt', query_string=params):
-         return majorlogin_jwt()
+
+    with app.test_request_context('/access-jwt', query_string=params):
+        return majorlogin_jwt()
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=1080, debug=False)
