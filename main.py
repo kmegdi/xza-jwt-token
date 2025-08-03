@@ -61,16 +61,18 @@ def majorlogin_jwt():
     hex_encrypted_data = binascii.hexlify(encrypted_data).decode('utf-8')
     payload_bytes = bytes.fromhex(hex_encrypted_data)
 
-    url = "https://clientbp.common.ggbluefox.com/GetLoginData"
+    url = "https://loginbp.ggblueshark.com/MajorLogin"
     headers = {
-        "Authorization": f"Bearer {access_token}",
-        "X-Unity-Version": "2018.4.11f1",
-        "X-GA": "v1 1",
-        "ReleaseVersion": "OB50",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Content-Length": str(len(payload_bytes)),
-        "User-Agent": "Dalvik/2.1.0 (Linux; Android 9)",
-        "Connection": "close",
+        'Expect': '100-continue',
+        'Authorization': f'Bearer {access_token}',
+        'X-Unity-Version': '2018.4.11f1',
+        'X-GA': 'v1 1',
+        'ReleaseVersion': 'OB50',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)',
+        'Host': 'clientbp.common.ggbluefox.com',
+        'Connection': 'close',
+        'Accept-Encoding': 'gzip, deflate, br',
     }
 
     try:
@@ -82,8 +84,8 @@ def majorlogin_jwt():
                 example_msg = output_pb2.Garena_420()
                 example_msg.ParseFromString(response.content)
                 data_dict = {field.name: getattr(example_msg, field.name)
-                             for field in example_msg.DESCRIPTOR.fields
-                             if field.name not in ["binary", "binary_data", "Garena420"]}
+                            for field in example_msg.DESCRIPTOR.fields
+                            if field.name not in ["binary", "binary_data", "Garena420"]}
             except Exception:
                 try:
                     data_dict = response.json()
